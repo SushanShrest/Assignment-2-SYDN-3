@@ -45,7 +45,6 @@ def encryption(text):
     return encrypted_text
 
 new_text = encryption(text)
-print("New Text: ",new_text)
 
 def decryption(new_text):
     encrypted_text = new_text
@@ -56,7 +55,16 @@ def decryption(new_text):
 
     print("File decrypted successfully.")
     print('Decryption Text: ',decrypted_text)
+    return decrypted_text
 
-decryption(new_text)
-print('original text: ',text)
+original_text = text
+decrypted = decryption(new_text)
+
+def verify():
+    if decrypted == original_text:
+        print("Verification Successful: Content matches.")
+    else:
+        print("Verification Failed: Content does not match.")
+
+verify()
 
