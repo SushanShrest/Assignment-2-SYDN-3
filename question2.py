@@ -52,7 +52,7 @@ for csv_filename in os.listdir(TEMPERATURE_FOLDER_PATH):
                     season_temperatures[season].append(temperature)
                     station_temperatures[station_name].append(temperature)
 
-with open("average_temperature.txt", "w", encoding="utf-8") as f:
+with open("average_temp.txt", "w", encoding="utf-8") as f:
     for season, temperature in season_temperatures.items():
         # temperature = season_temperatures[season]
         average = sum(temperature) / len(temperature)
@@ -81,4 +81,26 @@ with open("largest_temp_range_station.txt","w", encoding="utf-8") as f:
             f.write(
                 f"{station}: Range {range_val:.1f}°C (Max: {range_max_temp:.1f}°C, Min: {range_min_temp:.1f}°C)\n"
             )
-            
+
+def standard_deviation(values):
+    if not values:
+        return None
+    mean = sum(values)/len(values)
+    variance = sum((x-mean)**2 for x in values)/len(values)
+    return math.sqrt(variance)
+
+std_deviation = {}
+for station in station_temperatures:
+    std_deviation[station] = standard_deviation(station_temperatures[station])
+
+min_std = min(std_deviation.values())
+max_std = max(std_deviation.values())
+
+with open("temperature_stability_stations.txt", "w", encoding="utf-8") as file:
+    for station in std_deviation:
+        if std_deviation[station] == min_std:
+            file.write(f"Most Stable: {station}: StdDev {min_std:.1f}°C\n")
+
+    for station in std_deviation:
+        if std_deviation[station] == max_std:
+            file.write(f"Most Variable: {station}: StdDev {max_std:.1f}°C\n")
