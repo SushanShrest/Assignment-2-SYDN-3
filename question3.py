@@ -21,3 +21,20 @@ def draw_polygon(sides, length, depth):
     for _ in range(sides):
         draw_edge(length, depth)
         turtle.left(angle)
+
+def main():
+    sides = int(input("Enter the number of sides: "))
+    length = int(input("Enter the side length: "))
+    depth = int(input("Enter the recursion depth: "))
+
+    turtle.speed(0)
+    turtle.hideturtle()
+    turtle.penup()
+
+    turtle.goto(-length / 2, -length / 2.5)
+    turtle.pendown()
+    turtle.pencolor("black")
+    draw_polygon(sides, length, depth)
+    turtle.done()
+
+main()
