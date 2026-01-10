@@ -13,3 +13,11 @@ def draw_edge(length, depth):
     draw_edge(segment, depth - 1)
     turtle.left(60)
     draw_edge(segment, depth - 1)
+
+def draw_polygon(sides, length, depth):
+   
+    angle = 360 / sides
+
+    for _ in range(sides):
+        draw_edge(length, depth)
+        turtle.left(angle)
