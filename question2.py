@@ -2,6 +2,7 @@ import os
 import csv
 import math
 
+# Folder containg temperature csv files.
 TEMPERATURE_FOLDER_PATH = "temperatures"
 MONTHS = [
     "January", "February", "March", "April",
@@ -9,6 +10,7 @@ MONTHS = [
     "September", "October", "November", "December"
 ]
 
+# Return season based on month
 def get_season(month):
     if month in ["December", "January", "February"]:
         return "Summer"
@@ -18,7 +20,8 @@ def get_season(month):
         return "Winter"
     else:
         return "Spring"
-     
+
+# Store temperature by season     
 season_temperatures = {
     "Summer":[],
     "Autumn":[],
@@ -26,8 +29,10 @@ season_temperatures = {
     "Spring": [],
 }
 
+# Store temperatures by station
 station_temperatures = {}
 
+# Read all CSV files in folder
 for csv_filename in os.listdir(TEMPERATURE_FOLDER_PATH):
     if csv_filename.endswith(".csv"):
          path = os.path.join(TEMPERATURE_FOLDER_PATH, csv_filename)
@@ -37,12 +42,15 @@ for csv_filename in os.listdir(TEMPERATURE_FOLDER_PATH):
 
             for row in reader:
                 station_name = row["STATION_NAME"]
+                # Create station entry if missing
                 if station_name not in station_temperatures:
                     station_temperatures[station_name] = []
 
+                # Read monthly temperatures.
                 for month in MONTHS:
                     temperature_str = row[month]
 
+                    # Skip missing values
                     if temperature_str == "" or temperature_str.lower() == "nan":
                         continue
 
@@ -52,6 +60,7 @@ for csv_filename in os.listdir(TEMPERATURE_FOLDER_PATH):
                     season_temperatures[season].append(temperature)
                     station_temperatures[station_name].append(temperature)
 
+# Write average temperature per season
 with open("average_temp.txt", "w", encoding="utf-8") as f:
     for season, temperature in season_temperatures.items():
         # temperature = season_temperatures[season]
@@ -61,6 +70,7 @@ with open("average_temp.txt", "w", encoding="utf-8") as f:
 max_range = 0
 station_ranges = {}
 
+# Find station with largest temperature range
 for station in station_temperatures:
     temps = station_temperatures[station]
     if not temps:
@@ -75,6 +85,7 @@ for station in station_temperatures:
     if temp_range > max_range:
         max_range = temp_range
 
+# Write station with largest range
 with open("largest_temp_range_station.txt","w", encoding="utf-8") as f:
     for station, (range_val ,range_max_temp, range_min_temp) in station_ranges.items():
         if range_val == max_range:
@@ -82,6 +93,7 @@ with open("largest_temp_range_station.txt","w", encoding="utf-8") as f:
                 f"{station}: Range {range_val:.1f}°C (Max: {range_max_temp:.1f}°C, Min: {range_min_temp:.1f}°C)\n"
             )
 
+#calculate standard deviation
 def standard_deviation(values):
     if not values:
         return None
@@ -89,13 +101,16 @@ def standard_deviation(values):
     variance = sum((x-mean)**2 for x in values)/len(values)
     return math.sqrt(variance)
 
+# Store standard deviation per station
 std_deviation = {}
 for station in station_temperatures:
     std_deviation[station] = standard_deviation(station_temperatures[station])
 
+# Find min and max standard deviation
 min_std = min(std_deviation.values())
 max_std = max(std_deviation.values())
 
+# Write most stable and most varieable stables.
 with open("temperature_stability_stations.txt", "w", encoding="utf-8") as file:
     for station in std_deviation:
         if std_deviation[station] == min_std:
